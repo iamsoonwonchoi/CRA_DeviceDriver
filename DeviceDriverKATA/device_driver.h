@@ -1,5 +1,11 @@
 #pragma once
 #include "flash_memory_device.h"
+#include <stdexcept>
+
+class ReadFiveTimeFail : public std::exception
+{
+
+};
 
 class DeviceDriver
 {
