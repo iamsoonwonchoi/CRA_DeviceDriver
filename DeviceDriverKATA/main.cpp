@@ -15,30 +15,56 @@ protected:
 	}
 
 public:
+	void ReadFiveTimesInValidCase(int data)
+	{
+		EXPECT_CALL(*mock_hardware, read)
+			.Times(5)
+			.WillRepeatedly(Return(data));
+	}
+
+	static const int EMPTY = 0xFF;
+	static const int DATA_A = 0xA;
+	static const int DATA_B = 0xB;
+	static const int TARGET_ADDRESS = 0xFF;
+
 	MockFlashMemoryDevice* mock_hardware{ nullptr };
 	DeviceDriver driver{ nullptr };
 };
 
 TEST_F(DeviceDriverFixture, ReadFromHW_HaveToReadFiveTimesInValidCase) {
-	// act, assert
-	EXPECT_CALL(*mock_hardware, read)
-		.Times(5)
-		.WillRepeatedly(Return(0xA));
+	ReadFiveTimesInValidCase(DATA_A);
 
-	int data = driver.read(0xFF);
+	int data = driver.read(TARGET_ADDRESS);
+	
+	EXPECT_EQ(data, DATA_A);
 }
 
 TEST_F(DeviceDriverFixture, ReadFromHW_DifferentData) {
-	// act
 	EXPECT_CALL(*mock_hardware, read)
 		.Times(4)
-		.WillOnce(Return(0xAA))
-		.WillOnce(Return(0xAA))
-		.WillOnce(Return(0xAA))
-		.WillOnce(Return(0xFF))
-		.WillOnce(Return(0xAA));
+		.WillOnce(Return(DATA_A))
+		.WillOnce(Return(DATA_A))
+		.WillOnce(Return(DATA_A))
+		.WillOnce(Return(EMPTY))
+		.WillOnce(Return(DATA_A));
 
-	EXPECT_THROW(driver.read(0xFF), std::exception);
+	EXPECT_THROW(driver.read(TARGET_ADDRESS), std::exception);
+}
+
+TEST_F(DeviceDriverFixture, WriteFromHW_NotEmptyCase) {
+	ReadFiveTimesInValidCase(DATA_A);
+
+	EXPECT_CALL(*mock_hardware, write).Times(1);
+
+	EXPECT_THROW(driver.write(TARGET_ADDRESS, DATA_A), std::exception);
+}
+
+TEST_F(DeviceDriverFixture, WriteFromHW_EmptyCase) {
+	ReadFiveTimesInValidCase(EMPTY);
+
+	EXPECT_CALL(*mock_hardware, write).Times(1);
+
+	driver.write(TARGET_ADDRESS, DATA_B);
 }
 
 int main() {

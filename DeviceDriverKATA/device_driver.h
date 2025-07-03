@@ -7,6 +7,11 @@ class ReadFiveTimeFail : public std::exception
 
 };
 
+class WriteFail : public std::exception
+{
+
+};
+
 class DeviceDriver
 {
 public:
@@ -16,4 +21,6 @@ public:
 
 protected:
     FlashMemoryDevice* m_hardware;
+private:
+    static const int EMPTY = 0xFF;
 };
