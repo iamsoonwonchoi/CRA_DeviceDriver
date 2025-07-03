@@ -1,5 +1,16 @@
 #pragma once
 #include "flash_memory_device.h"
+#include <stdexcept>
+
+class ReadFiveTimeFail : public std::exception
+{
+
+};
+
+class WriteFail : public std::exception
+{
+
+};
 
 class DeviceDriver
 {
@@ -10,4 +21,6 @@ public:
 
 protected:
     FlashMemoryDevice* m_hardware;
+private:
+    static const int EMPTY = 0xFF;
 };

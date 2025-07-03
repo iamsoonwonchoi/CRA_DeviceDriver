@@ -130,6 +130,7 @@
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'"> %(AdditionalOptions)</AdditionalOptions>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|x64'"> %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
+    <ClCompile Include="Mock_FlashMemoryDevice.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="device_driver.h" />
